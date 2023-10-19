@@ -538,9 +538,30 @@ def before_first_inclusive(text, marker):
 
 
 
-
-
-
+# print("Welcome to the New York Times Game Center!")
+# print("What will be your gamer tag for the leaderboard? We have the following requirements:")
+# print("1. Your gamer tag must contain between two and six characters.")
+# print("2. The first two characters of your gamer tag MUST be letters.")
+# print("3. If your gamer tag contains any numbers, all numbers must be added after all the letters are complete.")
+# print("4. If your gamer tag contains any numbers, the number 0 cannot be the first number used.")
+# print("5. Your gamer tag can only contain alphanumeric characters.")
+#
+# gamer_tag = input("")
+# for _ in range(100):
+#     if 2 <= len(gamer_tag) <= 6 and gamer_tag[:2].isalpha():
+#         if len(gamer_tag) > 2:
+#             if gamer_tag.isnumeric():
+#                 if gamer_tag[2] != 0:
+#                     print("Great! That matches our gamer tag requirements. See you on the leaderboards soon!")
+#                     break
+#                 else:
+#                     print("Invalid gamer tag. Please try again.")
+#                     continue
+#             else:
+#
+#
+#         else:
+#             print("Invalid gamer tag. Please try again.")
 
 
 

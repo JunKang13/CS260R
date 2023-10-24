@@ -576,7 +576,3 @@ def before_first_inclusive(text, marker):
 #
 #
 
-
-
-
-

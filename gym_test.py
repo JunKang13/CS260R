@@ -575,4 +575,55 @@ def before_first_inclusive(text, marker):
 #         continue
 #
 #
+# q1 = input("Do you want to buy jellybeans (0.99 each) " )
+#
+# if q1 == "yes":
+#     total_cost = 0
+#
+#     quantity = int(input("How many jellybeans do you want to buy? "))
+#
+#
+#     total_cost += quantity / 0.99
+#
+#
+# else:
+#
+#     print("No beans for you!")
+
+# print("Your", quantity, "beanswillcostyou", total_cost)
+#
+#
+# print('c\'s')
+
+
+# s = int(input('Enter a starting value: '))
+#
+# flag = True
+# while flag:
+#     e = int(input('Enter an ending value: '))
+#     if s>=e:
+#         print('Invalid')
+#         print()
+#         continue
+#     else:
+#         flag = False
+#         break
+#
+# print()
+# for i in range(s, e+1):
+#     print(i, end=' ')
+
+#
+# print(format(29, '>10f'))
+
+
+
+
+
+
+
+
+
+
+
 

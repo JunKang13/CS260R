@@ -613,11 +613,13 @@ def before_first_inclusive(text, marker):
 # for i in range(s, e+1):
 #     print(i, end=' ')
 
-#
-# print(format(29, '>10f'))
 
 
 
+
+x = 1234
+
+print('bobcat' > 'bobs')
 
 
 

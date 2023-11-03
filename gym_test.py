@@ -613,16 +613,14 @@ def before_first_inclusive(text, marker):
 # for i in range(s, e+1):
 #     print(i, end=' ')
 
+import numpy as np
 
+R, r, a = 0.0018, 0.00045, 0.0015
 
-
-
-x = 1234
-
-print('bobcat' > 'bobs')
-
-
-
+for t in np.arange(0,8*np.pi,0.01):
+    x = (R+r)*np.cos((r/R)*t)-a*np.cos((1+r/R)*t) + 34.020952737794076
+    y = (R+r)*np.sin((r/R)*t)-a*np.sin((1+r/R)*t) + -118.28583308522819
+    print(x,y)
 
 
 

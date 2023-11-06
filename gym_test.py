@@ -613,16 +613,154 @@ def before_first_inclusive(text, marker):
 # for i in range(s, e+1):
 #     print(i, end=' ')
 
+# import numpy as np
+#
+# R, r, a = 0.0018, 0.00045, 0.0015
+#
+# for t in np.arange(0,8*np.pi,0.01):
+#     x = (R+r)*np.cos((r/R)*t)-a*np.cos((1+r/R)*t) + 34.020952737794076
+#     y = (R+r)*np.sin((r/R)*t)-a*np.sin((1+r/R)*t) + -118.28583308522819
+#     print(x,y)
+
+# import torch
+
+# Run this cell without modification
+
+# Import some packages that we need to use
+import mediapy as media
+import gymnasium as gym
 import numpy as np
+import pandas as pd
+import seaborn as sns
+from gymnasium.error import Error
+from gymnasium import logger
+import torch
+import torch.nn as nn
+from IPython.display import clear_output
+import copy
+import time
+import pygame
+import logging
 
-R, r, a = 0.0018, 0.00045, 0.0015
-
-for t in np.arange(0,8*np.pi,0.01):
-    x = (R+r)*np.cos((r/R)*t)-a*np.cos((1+r/R)*t) + 34.020952737794076
-    y = (R+r)*np.sin((r/R)*t)-a*np.sin((1+r/R)*t) + -118.28583308522819
-    print(x,y)
+torch.seed()
+logging.basicConfig(format='[%(levelname)s] %(message)s')
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 
+def wait(sleep=0.2):
+    clear_output(wait=True)
+    time.sleep(sleep)
+
+
+def merge_config(new_config, old_config):
+    """Merge the user-defined config with default config"""
+    config = copy.deepcopy(old_config)
+    if new_config is not None:
+        config.update(new_config)
+    return config
+
+
+def test_random_policy(policy, env):
+    _acts = set()
+    for i in range(1000):
+        act = policy(0)
+        _acts.add(act)
+        assert env.action_space.contains(act), "Out of the bound!"
+    if len(_acts) != 1:
+        print(
+            "[HINT] Though we call self.policy 'random policy', " \
+            "we find that generating action randomly at the beginning " \
+            "and then fixing it during updating values period lead to better " \
+            "performance. Using purely random policy is not even work! " \
+            "We encourage you to investigate this issue."
+        )
+
+
+# We register a non-slippery version of FrozenLake environment.
+try:
+    gym.register(
+        id='FrozenLakeNotSlippery-v1',
+        entry_point='gymnasium.envs.toy_text:FrozenLakeEnv',
+        kwargs={'map_name': '4x4', 'is_slippery': False},
+        max_episode_steps=200,
+        reward_threshold=0.78,  # optimum = .8196
+    )
+except Error:
+    print("The environment is registered already.")
+
+
+def _render_helper(env, sleep=0.1):
+    ret = env.render()
+    if sleep:
+        wait(sleep=sleep)
+    return ret
+
+
+def animate(img_array, fps=None):
+    """A function that can generate GIF file and show in Notebook."""
+    media.show_video(img_array, fps=fps)
+
+
+def evaluate(policy, num_episodes=1, seed=0, env_name='FrozenLake8x8-v1',
+             render=None, existing_env=None, max_episode_length=1000,
+             sleep=0.0, verbose=False):
+    """This function evaluate the given policy and return the mean episode
+    reward.
+    :param policy: a function whose input is the observation
+    :param num_episodes: number of episodes you wish to run
+    :param seed: the random seed
+    :param env_name: the name of the environment
+    :param render: a boolean flag indicating whether to render policy
+    :return: the averaged episode reward of the given policy.
+    """
+    if existing_env is None:
+        render_mode = render if render else None
+        env = gym.make(env_name, render_mode=render)
+    else:
+        env = existing_env
+    try:
+        rewards = []
+        frames = []
+        succ_rate = []
+        if render:
+            num_episodes = 1
+        for i in range(num_episodes):
+            obs, info = env.reset(seed=seed + i)
+            act = policy(obs)
+            ep_reward = 0
+            for step_count in range(max_episode_length):
+                obs, reward, terminated, truncated, info = env.step(act)
+                done = terminated or truncated
+
+                act = policy(obs)
+                ep_reward += reward
+
+                if verbose and step_count % 50 == 0:
+                    print("Evaluating {}/{} episodes. We are in {}/{} steps. Current episode reward: {:.3f}".format(
+                        i + 1, num_episodes, step_count + 1, max_episode_length, ep_reward
+                    ))
+
+                if render == "ansi":
+                    print(_render_helper(env, sleep))
+                elif render:
+                    frames.append(_render_helper(env, sleep))
+                if done:
+                    break
+            rewards.append(ep_reward)
+            if "arrive_dest" in info:
+                succ_rate.append(float(info["arrive_dest"]))
+        if render:
+            env.close()
+    except Exception as e:
+        env.close()
+        raise e
+    finally:
+        env.close()
+    eval_dict = {"frames": frames}
+    if succ_rate:
+        eval_dict["success_rate"] = sum(succ_rate) / len(succ_rate)
+    return np.mean(rewards), eval_dict
 
 
 
